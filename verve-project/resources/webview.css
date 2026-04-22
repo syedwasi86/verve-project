@@ -1,0 +1,93 @@
+:root {
+    --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --vscode-foreground: #d4d4d4;
+    --vscode-button-background: #007acc;
+    --vscode-button-hoverBackground: #1177bb;
+}
+
+body {
+    font-family: var(--vscode-font-family);
+    color: var(--vscode-foreground);
+    padding: 16px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+h2 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.status {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status.active {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4caf80;
+}
+
+.info {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    font-size: 13px;
+    min-height: 20px;
+}
+
+.info p {
+    margin: 0;
+    color: #a0a0a0;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--vscode-button-background);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--vscode-foreground);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn:active {
+    opacity: 0.8;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

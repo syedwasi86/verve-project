@@ -1,0 +1,76 @@
+{
+  "name": "verve-project",
+  "displayName": "verve project",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.109.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:verveTrackingView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "verve-explorer",
+          "title": "Verve Tracking",
+          "icon": "$(record)"
+        }
+      ]
+    },
+    "views": {
+      "verve-explorer": [
+        {
+          "type": "webview",
+          "id": "verveTrackingView",
+          "name": "Tracking Control",
+          "icon": "resources/verveicon.png"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "verve.startTracking",
+        "title": "Verve: Start Typing Dynamics Tracking",
+        "category": "Verve"
+      },
+      {
+        "command": "verve.stopTracking",
+        "title": "Verve: Stop Typing Dynamics Tracking",
+        "category": "Verve"
+      },
+      {
+        "command": "verve.endTracking",
+        "title": "Verve: End Tracking & Save + Post",
+        "category": "Verve"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.17",
+    "@types/uuid": "^10.0.0",
+    "@types/vscode": "^1.109.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
+  }
+}
