@@ -1,6 +1,6 @@
 # Project Verve — Complete Pipeline Documentation
 
-**Team:** 1604-23-733 · Syed Majid Ali · Syed Wasi Uddin · Syed Ghulam Hussain  
+**Author:** Syed Wasi Uddin  
 **Stack:** TypeScript (VS Code Extension) → FastAPI (Python Backend) → Scikit-learn (ML) → Streamlit (Dashboard)
 
 ---

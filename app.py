@@ -1,4 +1,4 @@
-﻿import os
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -18,58 +18,179 @@ if "last_api_result" not in st.session_state:
 # -- Page config --------------------------------------------------------------
 st.set_page_config(
     page_title="Verve: Authenticity Dashboard",
-    page_icon="shield",
+    page_icon="🛡️",
     layout="wide",
 )
 
-# -- Global CSS ---------------------------------------------------------------
+# -- Enhanced High-Contrast Global CSS -----------------------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-
-.main { background-color: #0e1117; }
-
-[data-testid="stMetricLabel"]  { color: #a0aec0 !important; font-size: 0.78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-[data-testid="stMetricValue"]  { color: #f0f4f8 !important; font-size: 1.55rem; font-weight: 700; }
-[data-testid="stMetricDelta"]  { font-size: 0.78rem; }
-
-.section-header {
-    font-size: 1.05rem; font-weight: 700; color: #a0aec0;
-    letter-spacing: .1em; text-transform: uppercase;
-    margin: 1.4rem 0 .6rem 0;
-    border-left: 3px solid #7c3aed; padding-left: .6rem;
+html, body, [class*="css"] {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
+.stApp {
+    background-color: #0B0F19 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Typography & Headings */
+h1 {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    font-size: 2.2rem !important;
+    margin-bottom: 0.2rem !important;
+}
+
+h2, h3, h4 {
+    color: #F8FAFC !important;
+    font-weight: 700 !important;
+}
+
+p, span, label, div {
+    color: #E2E8F0 !important;
+}
+
+.stCaption {
+    color: #94A3B8 !important;
+    font-weight: 500 !important;
+}
+
+/* High Contrast Metric Cards */
+[data-testid="stMetric"] {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 12px !important;
+    padding: 14px 18px !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+[data-testid="stMetric"]:hover {
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    transform: translateY(-2px);
+}
+
+[data-testid="stMetricLabel"] {
+    color: #CBD5E1 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #FFFFFF !important;
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+}
+
+[data-testid="stMetricDelta"] {
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+}
+
+/* Section Header */
+.section-header {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #F8FAFC;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 1.6rem 0 0.8rem 0;
+    border-left: 4px solid #A855F7;
+    padding-left: 0.75rem;
+}
+
+/* Verdict Banners */
 .verdict-human {
-    background: linear-gradient(135deg,#064e3b,#065f46);
-    border: 1px solid #10b981; border-radius: 12px; padding: 18px 24px;
-    color: #d1fae5; font-size: 1.05rem; font-weight: 600;
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.95), rgba(16, 185, 129, 0.35));
+    border: 1.5px solid #10B981;
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: #ECFDF5;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
 }
 .verdict-ai {
-    background: linear-gradient(135deg,#1e3a5f,#1e40af);
-    border: 1px solid #3b82f6; border-radius: 12px; padding: 18px 24px;
-    color: #dbeafe; font-size: 1.05rem; font-weight: 600;
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.35));
+    border: 1.5px solid #3B82F6;
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: #EFF6FF;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
 }
 .verdict-paste {
-    background: linear-gradient(135deg,#451a03,#78350f);
-    border: 1px solid #f59e0b; border-radius: 12px; padding: 18px 24px;
-    color: #fef3c7; font-size: 1.05rem; font-weight: 600;
+    background: linear-gradient(135deg, rgba(120, 53, 15, 0.95), rgba(245, 158, 11, 0.35));
+    border: 1.5px solid #F59E0B;
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: #FFFBEB;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
 }
 .verdict-waiting {
-    background: linear-gradient(135deg,#1a1a2e,#16213e);
-    border: 1px solid #4b5563; border-radius: 12px; padding: 18px 24px;
-    color: #9ca3af; font-size: 1.05rem;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+    border: 1.5px solid #64748B;
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: #F1F5F9;
+    font-size: 1.05rem;
 }
 
+/* Ground Truth Chips */
 .gt-chip {
-    display:inline-block; padding:3px 12px; border-radius:999px;
-    font-size:.78rem; font-weight:700; margin:0 4px;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: 4px 4px 0 4px;
 }
-.chip-human  { background:#065f46; color:#d1fae5; }
-.chip-paste  { background:#78350f; color:#fef3c7; }
-.chip-ai     { background:#1e3a8a; color:#dbeafe; }
+.chip-human  { background: #065F46; color: #D1FAE5; border: 1px solid #10B981; }
+.chip-paste  { background: #78350F; color: #FEF3C7; border: 1px solid #F59E0B; }
+.chip-ai     { background: #1E3A8A; color: #DBEAFE; border: 1px solid #3B82F6; }
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: #0F172A !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.sb-section-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #C084FC;
+    margin: 1.4rem 0 0.5rem 0;
+}
+
+.sb-card {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 0.6rem;
+}
+
+.sb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    margin: 0.35rem 0;
+}
+
+.sb-key { color: #94A3B8; font-weight: 500; }
+.sb-val { color: #F8FAFC; font-weight: 700; font-family: monospace; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -79,39 +200,25 @@ try:
 except Exception:
     st.sidebar.markdown(
         "<div style='text-align:center;font-size:3rem;font-weight:900;"
-        "color:#7c3aed;letter-spacing:-.02em;padding:8px 0'>V</div>",
+        "color:#A855F7;letter-spacing:-.02em;padding:8px 0'>V</div>",
         unsafe_allow_html=True,
     )
 
 st.sidebar.markdown("""
 <style>
-[data-testid="stSidebar"] { background: #0d0f1a !important; }
 .sb-section-label {
-    font-size: .65rem; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: #7c3aed;
-    margin: 1.2rem 0 .35rem 0;
+    font-size: .72rem; font-weight: 800; letter-spacing: .12em;
+    text-transform: uppercase; color: #C084FC;
+    margin: 1.2rem 0 .4rem 0;
 }
-.sb-card {
-    background: rgba(124,58,237,.08);
-    border: 1px solid rgba(124,58,237,.25);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: .5rem;
-}
-.sb-row { display:flex; justify-content:space-between; align-items:center;
-           font-size:.82rem; margin:.25rem 0; }
-.sb-key  { color:#8892a4; }
-.sb-val  { color:#e2e8f0; font-weight:600; font-family:monospace;
-           max-width:120px; overflow:hidden; text-overflow:ellipsis;
-           white-space:nowrap; }
 </style>
 """, unsafe_allow_html=True)
 
 api_url = API_BASE
 
 # -- Header -------------------------------------------------------------------
-st.title("Verve - Human Authenticity Portal")
-st.markdown("*Real-time behavioral biometrics dashboard. Tracks keystroke dynamics to distinguish Human, AI, and Paste authorship.*")
+st.title("Verve — Human Authenticity Portal")
+st.markdown("<p style='color:#CBD5E1; font-size:1.05rem; margin-top:-0.4rem;'>Real-time behavioral biometrics dashboard. Tracks keystroke dynamics to distinguish Human, AI, and Paste authorship.</p>", unsafe_allow_html=True)
 st.divider()
 
 # -- Fetch latest result from API ---------------------------------------------
@@ -175,7 +282,7 @@ with st.sidebar:
         )
     else:
         st.markdown(
-            '<div class="sb-card"><span style="color:#6b7280;font-size:.82rem">No active session</span></div>',
+            '<div class="sb-card"><span style="color:#94A3B8;font-size:.82rem">No active session</span></div>',
             unsafe_allow_html=True,
         )
 
@@ -202,7 +309,7 @@ with st.sidebar:
         )
     else:
         st.markdown(
-            '<div class="sb-card"><span style="color:#6b7280;font-size:.82rem">Awaiting session</span></div>',
+            '<div class="sb-card"><span style="color:#94A3B8;font-size:.82rem">Awaiting session</span></div>',
             unsafe_allow_html=True,
         )
 
@@ -221,7 +328,7 @@ with st.sidebar:
 # =============================================================================
 # Helper constants & functions for the state-flow chart
 # =============================================================================
-_SRC_COLOR = {"Human": "#10b981", "AI": "#3b82f6", "Paste": "#f59e0b", "Unknown": "#6b7280"}
+_SRC_COLOR = {"Human": "#10B981", "AI": "#3B82F6", "Paste": "#F59E0B", "Unknown": "#6B7280"}
 _SRC_LEVEL = {"Human": 1,         "AI": 2,          "Paste": 3,          "Unknown": 0}
 
 def _hex_to_rgb(h):
@@ -232,21 +339,21 @@ def _build_stateflow(runs_list):
     """Return a Plotly figure for the stepped authorship state-flow."""
     fig = go.Figure()
     for run in runs_list:
-        col  = _SRC_COLOR.get(run["source"], "#6b7280")
+        col  = _SRC_COLOR.get(run["source"], "#6B7280")
         span = run["x_end"] - run["x_start"]
         fig.add_vrect(x0=run["x_start"], x1=run["x_end"],
-                      fillcolor=col, opacity=0.07, line_width=0)
+                      fillcolor=col, opacity=0.12, line_width=0)
         if span > max(runs_list[-1]["x_end"] * 0.04, 5):
             fig.add_annotation(
                 x=(run["x_start"] + run["x_end"]) / 2,
                 y=_SRC_LEVEL.get(run["source"], 0) + 0.38,
                 text=run["source"], showarrow=False,
-                font=dict(color=col, size=9), opacity=0.75,
+                font=dict(color=col, size=11, family="Plus Jakarta Sans"), opacity=0.9,
             )
     legend_seen = set()
     for run in runs_list:
         src = run["source"]
-        col = _SRC_COLOR.get(src, "#6b7280")
+        col = _SRC_COLOR.get(src, "#6B7280")
         lev = _SRC_LEVEL.get(src, 0)
         r, g, b = _hex_to_rgb(col)
         show_leg = src not in legend_seen
@@ -255,8 +362,8 @@ def _build_stateflow(runs_list):
         fig.add_trace(go.Scatter(
             x=[run["x_start"], run["x_end"]], y=[lev, lev],
             mode="lines", name=src, showlegend=show_leg,
-            line=dict(color=col, width=4.5),
-            fill="tozeroy", fillcolor=f"rgba({r},{g},{b},0.09)",
+            line=dict(color=col, width=5),
+            fill="tozeroy", fillcolor=f"rgba({r},{g},{b},0.15)",
             hovertemplate=(
                 f"<b>{src}</b><br>"
                 f"Chars {run['x_start']}-{run['x_end']}<br>"
@@ -268,7 +375,7 @@ def _build_stateflow(runs_list):
         y_from = _SRC_LEVEL.get(runs_list[i]["source"], 0)
         y_to   = _SRC_LEVEL.get(runs_list[i + 1]["source"], 0)
         fig.add_shape(type="line", x0=x_t, y0=y_from, x1=x_t, y1=y_to,
-                      line=dict(color="rgba(255,255,255,0.55)", width=2))
+                      line=dict(color="rgba(255,255,255,0.75)", width=2))
     return fig
 
 # =============================================================================
@@ -286,8 +393,6 @@ if has_session:
     authenticity_score = pred.get("authenticity_score", 0.0)
     is_trustworthy     = float(authenticity_score) >= 50.0
 
-    # accuracy_match: percentage overlap between GT and ML prediction
-    # = sum of min(gt_k%, pred_k%) across {Human, Paste, AI}
     _categories = ["Human", "Paste", "AI"]
     accuracy_match = sum(
         min(gt.get(k, 0.0), dist.get(k, 0.0))
@@ -306,27 +411,27 @@ if has_session:
 if has_session:
     if label_name == "Human":
         css_class = "verdict-human"
-        icon = "[Human]"
+        icon = "🟢"
         summary = (
-            f"<b>Verified Human Authorship</b> - Authenticity score: <b>{authenticity_score:.1f}%</b> "
+            f"<b>Verified Human Authorship</b> — Authenticity score: <b>{authenticity_score:.1f}%</b> "
             f"| Confidence: <b>{confidence:.2%}</b><br>"
             f"Behavioral traces match organic problem-solving patterns.<br>"
             f"Ground Truth: {gt_html}"
         )
     elif label_name == "AI":
         css_class = "verdict-ai"
-        icon = "[AI]"
+        icon = "🔵"
         summary = (
-            f"<b>AI-Assisted Pattern Detected</b> - Authenticity score: <b>{authenticity_score:.1f}%</b> "
+            f"<b>AI-Assisted Pattern Detected</b> — Authenticity score: <b>{authenticity_score:.1f}%</b> "
             f"| Confidence: <b>{confidence:.2%}</b><br>"
             f"Behavioral traces suggest AI-generated or completed content.<br>"
             f"Ground Truth: {gt_html}"
         )
     else:
         css_class = "verdict-paste"
-        icon = "[Paste]"
+        icon = "🟠"
         summary = (
-            f"<b>Paste / Mixed Input Detected</b> - Authenticity score: <b>{authenticity_score:.1f}%</b> "
+            f"<b>Paste / Mixed Input Detected</b> — Authenticity score: <b>{authenticity_score:.1f}%</b> "
             f"| Confidence: <b>{confidence:.2%}</b><br>"
             f"Large paste operations or mixed input detected.<br>"
             f"Ground Truth: {gt_html}"
@@ -350,7 +455,7 @@ if has_session:
         st.metric("Authenticity Score", f"{float(authenticity_score):.1f}%",
                   delta="High Trust" if is_trustworthy else "Low Trust")
     with m2:
-        st.metric("System Validation Match", f"{accuracy_match:.1f}%",
+        st.metric("Validation Match", f"{accuracy_match:.1f}%",
                   delta="GT vs Prediction overlap")
     with m3:
         st.metric("Session Label", label_name,
@@ -365,7 +470,7 @@ if has_session:
 else:
     m1, m2, m3, m4, m5 = st.columns(5)
     for col, lbl in zip([m1, m2, m3, m4, m5],
-                        ["Authenticity Score", "System Validation Match",
+                        ["Authenticity Score", "Validation Match",
                          "Session Label", "Burst Ratio", "Avg Flight Time"]):
         col.metric(lbl, "-", delta="Awaiting session")
 
@@ -403,20 +508,22 @@ if rhythm_raw:
     total_chars = int(rhythm_df["cumchars"].iloc[-1])
     fig_sf.update_layout(
         plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-        font_color="#e2e8f0", height=300,
+        font=dict(color="#F8FAFC", family="Plus Jakarta Sans"),
+        height=320,
         xaxis=dict(
-            title="Cumulative Characters Written (backspaces & enters excluded)",
-            showgrid=True, gridcolor="rgba(255,255,255,0.06)",
+            title=dict(text="Cumulative Characters Written", font=dict(color="#F1F5F9", size=13)),
+            showgrid=True, gridcolor="rgba(255,255,255,0.12)",
+            tickfont=dict(color="#E2E8F0", size=12),
             range=[0, total_chars * 1.02],
         ),
         yaxis=dict(
             tickvals=[1, 2, 3],
             ticktext=["Human", "AI", "Paste"],
-            tickfont=dict(size=13), range=[0.3, 3.7],
-            showgrid=True, gridcolor="rgba(255,255,255,0.07)", zeroline=False,
+            tickfont=dict(color="#F8FAFC", size=13, weight="bold"), range=[0.3, 3.7],
+            showgrid=True, gridcolor="rgba(255,255,255,0.12)", zeroline=False,
         ),
         legend=dict(orientation="h", yanchor="bottom", y=1.05,
-                    xanchor="right", x=1, font=dict(size=11)),
+                    xanchor="right", x=1, font=dict(color="#F8FAFC", size=12)),
         margin=dict(t=45, b=45, l=110, r=20),
     )
     st.plotly_chart(fig_sf, use_container_width=True)
@@ -441,26 +548,26 @@ else:
     fig_ph = _build_stateflow(demo_runs)
     fig_ph.update_layout(
         plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-        font_color="#e2e8f0", height=280,
-        xaxis=dict(title="Cumulative Characters (demo)",
-                   showgrid=True, gridcolor="rgba(255,255,255,0.06)"),
+        font=dict(color="#F8FAFC", family="Plus Jakarta Sans"),
+        height=300,
+        xaxis=dict(title=dict(text="Cumulative Characters (demo)", font=dict(color="#F1F5F9", size=13)),
+                   showgrid=True, gridcolor="rgba(255,255,255,0.12)",
+                   tickfont=dict(color="#E2E8F0", size=12)),
         yaxis=dict(
             tickvals=[1, 2, 3],
             ticktext=["Human", "AI", "Paste"],
-            tickfont=dict(size=13), range=[0.3, 3.7],
-            showgrid=True, gridcolor="rgba(255,255,255,0.07)", zeroline=False,
+            tickfont=dict(color="#F8FAFC", size=13, weight="bold"), range=[0.3, 3.7],
+            showgrid=True, gridcolor="rgba(255,255,255,0.12)", zeroline=False,
         ),
         legend=dict(orientation="h", yanchor="bottom", y=1.05,
-                    xanchor="right", x=1, font=dict(size=11)),
+                    xanchor="right", x=1, font=dict(color="#F8FAFC", size=12)),
         margin=dict(t=45, b=45, l=110, r=20),
     )
     for trace in fig_ph.data:
-        trace.update(opacity=0.45)
+        trace.update(opacity=0.6)
     st.plotly_chart(fig_ph, use_container_width=True)
     st.caption(
-        "(Demo - submit a session to see the real timeline.)"
-        " Notice how the AI plateau spans hundreds of characters in one instant jump,"
-        " while human stretches are short incremental steps."
+        "(Demo — submit a session from VS Code extension to see live real-time metrics)."
     )
 
 st.divider()
@@ -482,20 +589,21 @@ with pred_col:
         fig_pie = px.pie(
             dist_df, names="Authorship", values="Percentage (%)",
             color="Authorship",
-            color_discrete_map={"Human": "#10b981", "Paste": "#f59e0b", "AI": "#3b82f6"},
+            color_discrete_map={"Human": "#10B981", "Paste": "#F59E0B", "AI": "#3B82F6"},
             hole=0.48,
         )
         fig_pie.update_layout(
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0", height=340,
-            legend=dict(orientation="h", yanchor="top", y=-0.05),
+            font=dict(color="#F8FAFC", family="Plus Jakarta Sans"),
+            height=350,
+            legend=dict(orientation="h", yanchor="top", y=-0.05, font=dict(color="#F8FAFC", size=12)),
             margin=dict(t=20, b=20, l=20, r=20),
         )
-        fig_pie.update_traces(textinfo="percent+label", textfont_size=13)
+        fig_pie.update_traces(textinfo="percent+label", textfont=dict(size=14, color="#FFFFFF"))
         st.plotly_chart(fig_pie, use_container_width=True)
-        st.caption("Character-weighted distribution of window-level classifier predictions.")
+        st.caption("Character-weighted distribution of classifier predictions.")
     else:
-        st.info("No prediction data yet.")
+        st.info("No prediction data available yet.")
 
 with gt_col:
     st.subheader("Validation Reference")
@@ -503,7 +611,7 @@ with gt_col:
         gt_df = pd.DataFrame(
             [{"Authorship": k, "Percentage (%)": v} for k, v in gt.items()]
         )
-        color_map = {"Human": "#10b981", "Paste": "#f59e0b", "AI": "#3b82f6"}
+        color_map = {"Human": "#10B981", "Paste": "#F59E0B", "AI": "#3B82F6"}
         fig_gt = px.bar(
             gt_df, x="Authorship", y="Percentage (%)",
             color="Authorship", color_discrete_map=color_map,
@@ -512,26 +620,29 @@ with gt_col:
         fig_gt.update_layout(
             showlegend=False,
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0", yaxis_range=[0, 100], height=340,
+            font=dict(color="#F8FAFC", family="Plus Jakarta Sans"),
+            yaxis=dict(range=[0, 100], tickfont=dict(color="#E2E8F0"), gridcolor="rgba(255,255,255,0.12)"),
+            xaxis=dict(tickfont=dict(color="#F8FAFC", size=13, weight="bold")),
+            height=350,
             margin=dict(t=20, b=20, l=20, r=20),
         )
-        fig_gt.update_traces(textposition="outside")
+        fig_gt.update_traces(textposition="outside", textfont=dict(size=13, color="#FFFFFF"))
         st.plotly_chart(fig_gt, use_container_width=True)
         st.caption(
-            f"Ground Truth tags - "
+            f"Ground Truth tags — "
             f"Human: {gt.get('Human', 0):.1f}% | "
             f"Paste: {gt.get('Paste', 0):.1f}% | "
             f"AI: {gt.get('AI', 0):.1f}%"
         )
     else:
-        st.info("No session data yet.")
+        st.info("No session ground truth data yet.")
 
 st.divider()
 
 # =============================================================================
 # BLOCK 5 - Technical Biometric Data (collapsible deep-dive)
 # =============================================================================
-with st.expander("Technical Biometric Data", expanded=False):
+with st.expander("Technical Biometric Data & Feature Breakdown", expanded=False):
 
     # 5a. Extracted Features Table
     st.markdown('<div class="section-header">Extracted Features (ML Input)</div>',
@@ -570,8 +681,8 @@ with st.expander("Technical Biometric Data", expanded=False):
 
         def highlight_match(row):
             if row["Ground Truth"] == row["Prediction"]:
-                return ["background-color: rgba(16,185,129,0.12)"] * 4
-            return ["background-color: rgba(239,68,68,0.10)"] * 4
+                return ["background-color: rgba(16,185,129,0.2)"] * 4
+            return ["background-color: rgba(239,68,68,0.2)"] * 4
 
         st.dataframe(
             pw_df.style.apply(highlight_match, axis=1),
@@ -594,20 +705,24 @@ with st.expander("Technical Biometric Data", expanded=False):
             fig_cmp.add_trace(go.Scatter(
                 x=windows_nums, y=gt_series,
                 mode="lines+markers", name="Ground Truth",
-                line=dict(color="#10b981", width=2), marker=dict(size=5),
+                line=dict(color="#10B981", width=3), marker=dict(size=7),
             ))
             fig_cmp.add_trace(go.Scatter(
                 x=windows_nums, y=pd_series,
                 mode="lines+markers", name="ML Prediction",
-                line=dict(color="#7c3aed", width=2, dash="dot"), marker=dict(size=5),
+                line=dict(color="#C084FC", width=3, dash="dot"), marker=dict(size=7),
             ))
             fig_cmp.update_layout(
                 yaxis=dict(tickvals=[0, 1, 2], ticktext=["Human", "AI", "Paste"],
-                           title="Label"),
-                xaxis_title="Window #",
+                           title=dict(text="Label", font=dict(color="#F8FAFC")),
+                           tickfont=dict(color="#F8FAFC", size=13, weight="bold"),
+                           gridcolor="rgba(255,255,255,0.12)"),
+                xaxis=dict(title=dict(text="Window #", font=dict(color="#F1F5F9")),
+                           tickfont=dict(color="#E2E8F0"),
+                           gridcolor="rgba(255,255,255,0.12)"),
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                font_color="#e2e8f0", height=280,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                font=dict(color="#F8FAFC", family="Plus Jakarta Sans"), height=300,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, font=dict(color="#F8FAFC")),
             )
             st.plotly_chart(fig_cmp, use_container_width=True)
     else:
@@ -615,4 +730,4 @@ with st.expander("Technical Biometric Data", expanded=False):
 
 # -- Footer -------------------------------------------------------------------
 st.divider()
-st.caption("Project Verve - Version v0.0.1 - Behavioral Biometric Authentication System")
+st.caption("Verve — Behavioral Biometric Authentication System")
