@@ -202,8 +202,3 @@ Returns the cached processing result of the most recently submitted session.
 
 **Syed Wasi Uddin**
 
----
-
-## 📜 License
-
-This project is licensed under the [MIT License](LICENSE).
